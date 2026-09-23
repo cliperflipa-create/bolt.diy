@@ -8,12 +8,24 @@ export const WORK_DIR = `/home/${WORK_DIR_NAME}`;
 export const MODIFICATIONS_TAG_NAME = 'bolt_file_modifications';
 export const MODEL_REGEX = /^\[Model: (.*?)\]\n\n/;
 export const PROVIDER_REGEX = /\[Provider: (.*?)\]\n\n/;
-export const DEFAULT_MODEL = 'claude-3-5-sonnet-latest';
+export const DEFAULT_MODEL = 'gpt-4.1-mini';
 export const PROMPT_COOKIE_KEY = 'cachedPrompt';
 
 const logger = createScopedLogger('Constants');
 
 const PROVIDER_LIST: ProviderInfo[] = [
+  {
+    name: 'OpenAILike',
+    staticModels: [
+      {
+        name: 'gpt-4.1-mini',
+        label: 'GPT 6 Luna',
+        provider: 'OpenAILike',
+        maxTokenAllowed: 8000,
+      },
+    ],
+    getDynamicModels: getOpenAILikeModels,
+  },
   {
     name: 'Anthropic',
     staticModels: [
@@ -48,11 +60,6 @@ const PROVIDER_LIST: ProviderInfo[] = [
     getApiKeyLink: 'https://ollama.com/download',
     labelForGetApiKey: 'Download Ollama',
     icon: 'i-ph:cloud-arrow-down',
-  },
-  {
-    name: 'OpenAILike',
-    staticModels: [],
-    getDynamicModels: getOpenAILikeModels,
   },
   {
     name: 'Cohere',
@@ -422,8 +429,9 @@ async function getOpenAILikeModels(
 
     return res.data.map((model: any) => ({
       name: model.id,
-      label: model.id,
+      label: model.id === 'gpt-4.1-mini' ? 'GPT 6 Luna' : model.id,
       provider: 'OpenAILike',
+      maxTokenAllowed: 8000,
     }));
   } catch (e) {
     console.error('Error getting OpenAILike models:', e);

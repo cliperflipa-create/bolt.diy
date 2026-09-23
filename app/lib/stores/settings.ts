@@ -18,7 +18,7 @@ export interface Shortcuts {
 }
 
 export const URL_CONFIGURABLE_PROVIDERS = ['Ollama', 'LMStudio', 'OpenAILike'];
-export const LOCAL_PROVIDERS = ['OpenAILike', 'LMStudio', 'Ollama'];
+export const LOCAL_PROVIDERS = ['LMStudio', 'Ollama'];
 
 export type ProviderSetting = Record<string, IProviderConfig>;
 
@@ -35,7 +35,8 @@ PROVIDER_LIST.forEach((provider) => {
   initialProviderSettings[provider.name] = {
     ...provider,
     settings: {
-      enabled: false,
+      // OpenAILike hosts GPT 6 Luna (Azure Foundry) and should be on by default
+      enabled: provider.name === 'OpenAILike',
     },
   };
 });
